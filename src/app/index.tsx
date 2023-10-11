@@ -1,12 +1,15 @@
 import { Routing } from "pages";
 import { StoreProvider, withProviders } from "./providers";
-import Post from "entities/post/ui/post";
+import { PostsVirtualScroll } from "features";
+import { ChakraProvider } from "@chakra-ui/react";
 
 const App = () => {
   return (
     <StoreProvider>
-      <Post />
-      <Routing />
+      <ChakraProvider>
+        <PostsVirtualScroll />
+        <Routing />
+      </ChakraProvider>
     </StoreProvider>
   );
 };

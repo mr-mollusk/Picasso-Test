@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { IPost } from "../model";
+import { IPost } from "entities/post/model";
+import { IPaginatedRequest } from "../model/index.types";
 
 export const postApi = createApi({
   reducerPath: "post",
@@ -7,7 +8,12 @@ export const postApi = createApi({
     baseUrl: "https://jsonplaceholder.typicode.com/",
   }),
   endpoints: (builder) => ({
-    fetchPosts: builder.query<IPost, void>({ query: () => `posts` }),
+    fetchPosts: builder.query<IPost[], IPaginatedRequest>({
+      query: ({ limit, start }) => ({
+        url: `posts`,
+        params: { _limit: limit, _start: start },
+      }),
+    }),
   }),
 });
 
