@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { IPost } from "entities/post/model";
-import { IPaginatedRequest } from "../model/index.types";
+import { IPost } from "entities";
+import { IPaginatedRequest } from "../../features/virtualScroll/model/index.types";
 
 export const postApi = createApi({
   reducerPath: "post",
@@ -14,7 +14,10 @@ export const postApi = createApi({
         params: { _limit: limit, _start: start },
       }),
     }),
+    fetchPostById: builder.query<IPost, number>({
+      query: (id) => ({ url: `posts/${id}` }),
+    }),
   }),
 });
 
-export const { useFetchPostsQuery } = postApi;
+export const { useFetchPostsQuery, useFetchPostByIdQuery } = postApi;

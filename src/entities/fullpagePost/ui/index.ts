@@ -1,0 +1,1 @@
+export { FullpagePost } from "./fullpagePost";

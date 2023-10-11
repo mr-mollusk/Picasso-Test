@@ -1,1 +1,1 @@
-export * from "./virtualScroll";
+export { PostsVirtualScroll } from "./postsVirtualScroll";

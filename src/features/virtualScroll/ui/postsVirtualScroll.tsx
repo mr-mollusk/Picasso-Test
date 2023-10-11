@@ -1,25 +1,21 @@
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
-import { useFetchPostsQuery } from "../api/posts.api";
-import { Box, Card, CardBody, Heading, Text, VStack } from "@chakra-ui/react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useFetchPostsQuery } from "../../../shared/api";
+import { Box, Spinner, VStack } from "@chakra-ui/react";
 import { useVirtualScroll } from "../hooks/useVirtualScroll";
-import { IPost } from "entities/post/model";
+import { IPost, Post } from "entities/post";
 
 export const PostsVirtualScroll: React.FC = () => {
   const scrollElementRef = useRef<HTMLDivElement>(null);
   const [itemsCount, setItemsCount] = useState(10);
-  const [query, setQuery] = useState({ limit: 10, start: 0 });
+  const [query, setQuery] = useState({ start: 0, limit: 10 });
   const [posts, setPosts] = useState<IPost[]>([]);
   const { data, isLoading } = useFetchPostsQuery(query);
-  const { virtualItems, totalHeight, startIndex, endIndex } = useVirtualScroll({
-    itemHeight: 90,
+  const itemHeight = 90;
+  const listHeight = 600;
+  const { virtualItems, totalHeight, startIndex } = useVirtualScroll({
+    itemHeight: itemHeight,
     itemsCount: itemsCount,
-    listHeight: 600,
+    listHeight: listHeight,
     getScrollElement: useCallback(() => scrollElementRef.current, []),
   });
 
@@ -41,9 +37,12 @@ export const PostsVirtualScroll: React.FC = () => {
     }
     const handleScroll = () => {
       const scrollTop = scrollElement.scrollTop;
-      console.log(scrollTop, itemsCount * 90 - 750);
-      if (scrollTop > itemsCount * 90 - 750 && posts.length) {
-        console.log(scrollTop, (itemsCount / 2) * 90);
+      console.log(scrollTop, itemsCount * itemHeight - (listHeight + 150));
+      if (
+        scrollTop > itemsCount * itemHeight - (listHeight + 150) &&
+        posts.length
+      ) {
+        console.log(scrollTop, (itemsCount / 2) * itemHeight);
 
         setQuery({ limit: 10, start: posts.length });
       }
@@ -52,33 +51,33 @@ export const PostsVirtualScroll: React.FC = () => {
     scrollElement.addEventListener("scroll", handleScroll);
 
     return () => scrollElement.removeEventListener("scroll", handleScroll);
-  }, [isLoading, posts, startIndex]);
+  }, [isLoading, itemsCount, posts, startIndex]);
 
   return (
     <Box ref={scrollElementRef} position="relative" h="600px" overflow="auto">
       <VStack w="100%" height={totalHeight} spacing="10px">
         {posts.length ? (
           virtualItems.map((virtualItem) => {
-            const item = posts[virtualItem.index]!;
+            const { id, userId, body, title } = posts[virtualItem.index]!;
             return (
-              <Card
-                key={item.id}
-                w="100%"
-                h="80px"
-                position="absolute"
-                transform={`translateY(${virtualItem.offsetTop}px)`}
-              >
-                <CardBody>
-                  <Heading as="h3" size="sm">
-                    {item.title}
-                  </Heading>
-                  <Text>{item.body}</Text>
-                </CardBody>
-              </Card>
+              <Post
+                key={id}
+                body={body}
+                title={title}
+                id={id}
+                userId={userId}
+                offsetTop={virtualItem.offsetTop}
+              />
             );
           })
         ) : (
-          <div>loading</div>
+          <Spinner
+            thickness="4px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            color="blue.500"
+            size="xl"
+          />
         )}
       </VStack>
     </Box>
