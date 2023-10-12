@@ -3,7 +3,7 @@ import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 interface IUseVirtualScroll {
   itemsCount: number;
   itemHeight: number;
-  listHeight: number;
+  // listHeight: number;
   overscan?: number;
   scrollingDelay?: number;
   getScrollElement: () => HTMLElement | null;
@@ -16,12 +16,34 @@ export function useVirtualScroll({
   itemsCount,
   scrollingDelay = DEFAULT_SCROLLING_DELAY,
   overscan = DEFAULT_OVERSCAN,
-  listHeight,
+
   getScrollElement,
 }: IUseVirtualScroll) {
+  const [listHeight, setListHeight] = useState(0);
   const [scrollTop, setScrollTop] = useState(0);
   const [isScrolling, setIsScrolling] = useState(false);
+  useLayoutEffect(() => {
+    const scrollElement = getScrollElement();
 
+    if (!scrollElement) {
+      return;
+    }
+    const resizeObserver = new ResizeObserver(([entry]) => {
+      if (!entry) {
+        return;
+      }
+      const heigth =
+        entry.borderBoxSize[0]?.blockSize ??
+        entry.target.getBoundingClientRect().height;
+
+      setListHeight(heigth);
+    });
+
+    resizeObserver.observe(scrollElement);
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [getScrollElement]);
   useLayoutEffect(() => {
     const scrollElement = getScrollElement();
 

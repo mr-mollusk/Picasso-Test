@@ -7,7 +7,8 @@ import { IPost, Post } from "entities/post";
 export const PostsVirtualScroll: React.FC = () => {
   const scrollElementRef = useRef<HTMLDivElement>(null);
   const [itemsCount, setItemsCount] = useState(10);
-  const [query, setQuery] = useState({ start: 0, limit: 10 });
+  const [limit, setLimit] = useState(10);
+  const [query, setQuery] = useState({ start: 0, limit: limit });
   const [posts, setPosts] = useState<IPost[]>([]);
   const { data, isLoading } = useFetchPostsQuery(query);
   const itemHeight = 90;
@@ -15,20 +16,32 @@ export const PostsVirtualScroll: React.FC = () => {
   const { virtualItems, totalHeight, startIndex } = useVirtualScroll({
     itemHeight: itemHeight,
     itemsCount: itemsCount,
-    listHeight: listHeight,
     getScrollElement: useCallback(() => scrollElementRef.current, []),
   });
 
   useEffect(() => {
     if (data) {
       setPosts([...posts, ...data]);
+      setItemsCount(posts.length + data.length);
     }
-    if (posts.length) {
-      setItemsCount(posts.length);
-    }
-    console.log();
   }, [data]);
+  useEffect(() => {
+    const scrollElement = scrollElementRef.current;
 
+    if (!scrollElement) {
+      return;
+    }
+
+    const height = scrollElement.getBoundingClientRect().height;
+    console.log(height);
+
+    if (height > 800) {
+      console.log(1);
+
+      setLimit(15);
+      setQuery({ limit: limit + 5, start: posts.length });
+    }
+  }, []);
   useEffect(() => {
     const scrollElement = scrollElementRef.current;
 
@@ -37,24 +50,28 @@ export const PostsVirtualScroll: React.FC = () => {
     }
     const handleScroll = () => {
       const scrollTop = scrollElement.scrollTop;
-      console.log(scrollTop, itemsCount * itemHeight - (listHeight + 150));
+      const scrollHeight = scrollElement.scrollHeight;
+      const clientHeight = scrollElement.clientHeight;
+      console.log(
+        Math.floor(scrollHeight - scrollTop),
+        Math.floor(clientHeight - 1)
+      );
+
       if (
-        scrollTop > itemsCount * itemHeight - (listHeight + 150) &&
+        Math.floor(scrollHeight - scrollTop) === Math.floor(clientHeight - 1) &&
         posts.length
       ) {
-        console.log(scrollTop, (itemsCount / 2) * itemHeight);
-
-        setQuery({ limit: 10, start: posts.length });
+        setQuery({ limit: limit, start: posts.length });
       }
     };
-
+    console.log(limit);
     scrollElement.addEventListener("scroll", handleScroll);
 
     return () => scrollElement.removeEventListener("scroll", handleScroll);
-  }, [isLoading, itemsCount, posts, startIndex]);
+  }, [itemsCount, posts, startIndex, query, limit]);
 
   return (
-    <Box ref={scrollElementRef} position="relative" h="600px" overflow="auto">
+    <Box ref={scrollElementRef} position="relative" h="80vh" overflow="auto">
       <VStack w="100%" height={totalHeight} spacing="10px">
         {posts.length ? (
           virtualItems.map((virtualItem) => {
