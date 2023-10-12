@@ -49,15 +49,13 @@ export const PostsVirtualScroll: React.FC = () => {
       const scrollTop = scrollElement.scrollTop;
       const scrollHeight = scrollElement.scrollHeight;
       const clientHeight = scrollElement.clientHeight;
-
       if (
-        Math.floor(scrollHeight - scrollTop) <= Math.ceil(clientHeight) &&
+        Math.floor(scrollHeight - scrollTop) <= Math.ceil(clientHeight + 1) &&
         posts.length
       ) {
         setQuery({ limit: limit, start: posts.length });
       }
     };
-    console.log(limit);
     scrollElement.addEventListener("scroll", handleScroll);
 
     return () => scrollElement.removeEventListener("scroll", handleScroll);
