@@ -3,7 +3,6 @@ import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 interface IUseVirtualScroll {
   itemsCount: number;
   itemHeight: number;
-  // listHeight: number;
   overscan?: number;
   scrollingDelay?: number;
   getScrollElement: () => HTMLElement | null;

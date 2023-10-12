@@ -10,9 +10,8 @@ export const PostsVirtualScroll: React.FC = () => {
   const [limit, setLimit] = useState(10);
   const [query, setQuery] = useState({ start: 0, limit: limit });
   const [posts, setPosts] = useState<IPost[]>([]);
-  const { data, isLoading } = useFetchPostsQuery(query);
+  const { data } = useFetchPostsQuery(query);
   const itemHeight = 90;
-  const listHeight = 600;
   const { virtualItems, totalHeight, startIndex } = useVirtualScroll({
     itemHeight: itemHeight,
     itemsCount: itemsCount,
@@ -25,6 +24,7 @@ export const PostsVirtualScroll: React.FC = () => {
       setItemsCount(posts.length + data.length);
     }
   }, [data]);
+
   useEffect(() => {
     const scrollElement = scrollElementRef.current;
 
@@ -33,11 +33,8 @@ export const PostsVirtualScroll: React.FC = () => {
     }
 
     const height = scrollElement.getBoundingClientRect().height;
-    console.log(height);
 
     if (height > 800) {
-      console.log(1);
-
       setLimit(15);
       setQuery({ limit: limit + 5, start: posts.length });
     }
@@ -52,13 +49,9 @@ export const PostsVirtualScroll: React.FC = () => {
       const scrollTop = scrollElement.scrollTop;
       const scrollHeight = scrollElement.scrollHeight;
       const clientHeight = scrollElement.clientHeight;
-      console.log(
-        Math.floor(scrollHeight - scrollTop),
-        Math.floor(clientHeight - 1)
-      );
 
       if (
-        Math.floor(scrollHeight - scrollTop) === Math.floor(clientHeight - 1) &&
+        Math.floor(scrollHeight - scrollTop) <= Math.ceil(clientHeight) &&
         posts.length
       ) {
         setQuery({ limit: limit, start: posts.length });
