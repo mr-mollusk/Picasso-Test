@@ -71,7 +71,12 @@ export const PostsVirtualScroll: React.FC = () => {
   }, [itemsCount, posts, startIndex, query, limit]);
 
   return (
-    <Box ref={scrollElementRef} position="relative" h="70vh" overflow="auto">
+    <Box
+      ref={scrollElementRef}
+      position="relative"
+      h={`${window.innerHeight * 0.8}px`}
+      overflow="auto"
+    >
       <VStack w="100%" height={totalHeight} spacing="10px">
         {posts.length ? (
           virtualItems.map((virtualItem) => {

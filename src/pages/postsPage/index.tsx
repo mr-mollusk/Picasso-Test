@@ -3,7 +3,12 @@ import { PostsVirtualScroll } from "features";
 
 const PostsPage = () => {
   return (
-    <Container maxW="container.lg" h="100vh" pt="5vh">
+    <Container
+      maxW="container.lg"
+      h={`${window.innerHeight}px`}
+      pt="5vh"
+      overflow="hidden"
+    >
       <Heading mb="20px">Список постов</Heading>
       <PostsVirtualScroll />
     </Container>
