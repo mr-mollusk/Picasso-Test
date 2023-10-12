@@ -24,7 +24,7 @@ export const Post: React.FC<IPost & IOffset> = ({
   };
   return (
     <Card
-      w="100%"
+      w="90%"
       h="80px"
       position="absolute"
       transform={`translateY(${offsetTop}px)`}
@@ -48,7 +48,9 @@ export const Post: React.FC<IPost & IOffset> = ({
                 : body}
             </Text>
           </VStack>
-          <Button onClick={handleNavigate}>Просмотр</Button>
+          <Button onClick={handleNavigate} colorScheme="teal">
+            Просмотр
+          </Button>
         </HStack>
       </CardBody>
     </Card>

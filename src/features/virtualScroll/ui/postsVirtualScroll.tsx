@@ -3,6 +3,7 @@ import { useFetchPostsQuery } from "../../../shared/api";
 import { Box, Spinner, VStack } from "@chakra-ui/react";
 import { useVirtualScroll } from "../hooks/useVirtualScroll";
 import { IPost, Post } from "entities/post";
+import s from "./postsScroll.module.css";
 
 export const PostsVirtualScroll: React.FC = () => {
   const scrollElementRef = useRef<HTMLDivElement>(null);
@@ -67,8 +68,11 @@ export const PostsVirtualScroll: React.FC = () => {
       position="relative"
       h={`${window.innerHeight * 0.8}px`}
       overflow="auto"
+      border="1px solid #000"
+      borderRadius="20px"
+      className={s.scrollContainer}
     >
-      <VStack w="100%" height={totalHeight} spacing="10px">
+      <VStack w="100%" height={totalHeight} spacing="10px" pt="20px">
         {posts.length ? (
           virtualItems.map((virtualItem) => {
             const { id, userId, body, title } = posts[virtualItem.index]!;

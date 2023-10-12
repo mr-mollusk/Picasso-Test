@@ -7,6 +7,7 @@ import {
   Center,
   Heading,
   Spinner,
+  Text,
 } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { useFetchPostByIdQuery } from "shared";
@@ -27,11 +28,18 @@ export const FullpagePost: React.FC<IFullpagePost> = ({ id }) => {
     <Center maxW="container.lg" h="100vh" m="0 auto">
       <Card>
         <CardHeader>
-          <Heading>{data.title}</Heading>
+          <Heading>
+            {data.id}: {data.title}
+          </Heading>
         </CardHeader>
-        <CardBody>{data.body}</CardBody>
+        <CardBody>
+          <Heading fontSize="sm">User №{data.userId}</Heading>
+          <Text>{data.body}</Text>
+        </CardBody>
         <CardFooter justifyContent="flex-end">
-          <Button onClick={handleNavigate}>Назад</Button>
+          <Button colorScheme="teal" onClick={handleNavigate}>
+            Назад
+          </Button>
         </CardFooter>
       </Card>
     </Center>
